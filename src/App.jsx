@@ -49,7 +49,7 @@ export default function FiveWhysFamilies() {
 
   const showFinal = step === 5;
   const inIntro = step === -1;
-  const inQuestion = step >= 0 && step <= 4;
+  const inQuestion = step >= 0 && step <= 4 && !showConvergence;
 
   const totalChairs = 20;
   const filledPerStep = [0, 5, 9, 13, 17, 20];
