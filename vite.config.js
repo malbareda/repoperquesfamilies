@@ -3,5 +3,5 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [react()],
-  base: '/repocursdireccio/',  // ← nom del teu repo
+  base: '/repoperquesfamilies/',  // ← nom del teu repo
 })
