@@ -7,6 +7,7 @@ export default function FiveWhysFamilies() {
   const [answers, setAnswers] = useState([]);
   const [currentAnswer, setCurrentAnswer] = useState("");
   const [selectedChair, setSelectedChair] = useState(null);
+  const [showConvergence, setShowConvergence] = useState(false); // pantalla intermèdia
 
   const questions = [
     "Per què les famílies no venen a les reunions d'inici de curs?",
@@ -18,26 +19,36 @@ export default function FiveWhysFamilies() {
 
   const suggestions = [
     [
-      "Perquè moltes no poden assistir en l’horari establert.",
-      "Perquè estan desconnectades de la cultura de centre.",
+      { text: "Perquè moltes no poden assistir en l'horari establert.", path: "logistic" },
+      { text: "Perquè estan desconnectades de la cultura de centre.", path: "cultural" },
     ],
     [
-      "Perquè coincideix amb horaris laborals o responsabilitats familiars.",
-      "Perquè socioculturalment es senten desvinculats de l’educació dels seus fills.",
+      { text: "Perquè coincideix amb horaris laborals o responsabilitats familiars.", path: "logistic" },
+      { text: "Perquè socioculturalment es senten desvinculats de l'educació dels seus fills.", path: "cultural" },
     ],
     [
-      "Perquè el centre només dóna una opció d’horari",
-      "Perquè tenen altres prioritats més enllà de l’educació.",
+      { text: "Perquè el centre només dóna una opció d'horari", path: "logistic" },
+      { text: "Perquè tenen altres prioritats més enllà de l'educació.", path: "cultural" },
     ],
     [
-      "Perquè es prioritza la facilitat d’organitzar el professorat",
-      "Perquè ningú els ha explicat les possibilitats que els obre la educació.",
+      { text: "Perquè es prioritza la facilitat d'organitzar el professorat", path: "logistic" },
+      { text: "Perquè ningú els ha explicat les possibilitats que els obre la educació.", path: "cultural" },
     ],
     [
-      "Perquè les famílies no eren a la presa de decisions de l'horari. Per tant, no s’han tingut en compte les seves necessitats ni s’ha recollit informació sobre la disponibilitat real de les famílies.",
-      "Perquè no s'ha pensat en que poden existir aquestes famílies ni s'han tingut en compte les seves necessitats. I no s’ha fet ús dels recursos TIS i treballadors socials que els hagués informat de la importància d’assistir a les reunions d’inici de curs.",
+      { text: "Perquè les famílies no eren a la presa de decisions de l'horari. Per tant, no s'han tingut en compte les seves necessitats ni s'ha recollit informació sobre la disponibilitat real de les famílies.", path: "logistic" },
+      { text: "Perquè no s'ha pensat en que poden existir aquestes famílies ni s'han tingut en compte les seves necessitats. I no s'ha fet ús dels recursos TIS i treballadors socials que els hagués informat de la importància d'assistir a les reunions d'inici de curs.", path: "cultural" },
     ],
   ];
+  
+// Causa arrel comuna als dos camins
+const ROOT_CAUSE = "No s'han tingut en compte les necessitats reals de les famílies.";
+
+// Colors per diferenciar els dos camins de raonament
+const pathColors = {
+  logistic: { main: "#2c5f7c", dark: "#1a3f54", label: "Via logística" },
+  cultural: { main: "#b8651f", dark: "#7d4213", label: "Via sociocultural" },
+};
+
 
   const showFinal = step === 5;
   const inIntro = step === -1;
@@ -55,9 +66,18 @@ export default function FiveWhysFamilies() {
     setAnswers(newAnswers);
     setCurrentAnswer("");
     setSelectedChair(null);
-    if (step === 4) setStep(5);
-    else setStep(step + 1);
+    if (step === 4) {
+      setShowConvergence(true); // primer mostrem convergència
+    } else {
+      setStep(step + 1);
+    }
   };
+  
+  const handleRevealRoot = () => {
+    setShowConvergence(false);
+    setStep(5);
+  };
+  
 
   const handleSuggestion = (text) => setCurrentAnswer(text);
 
@@ -66,7 +86,9 @@ export default function FiveWhysFamilies() {
     setAnswers([]);
     setCurrentAnswer("");
     setSelectedChair(null);
+    setShowConvergence(false);
   };
+  
 
   const palette = {
     bg: "#1a1f26",
@@ -92,6 +114,28 @@ export default function FiveWhysFamilies() {
     2, 7, 12, 0, 5, 10, 3, 8, 13, 1, 6, 11, 4, 9, 14, 15, 17, 16, 18, 19,
   ];
   const occupiedChairs = new Set(occupancyOrder.slice(0, currentFilled));
+
+  // Detecció del camí predominant segons les respostes triades
+  const detectPath = () => {
+    let logistic = 0;
+    let cultural = 0;
+    answers.forEach((ans) => {
+      suggestions.forEach((stepSugs) => {
+        stepSugs.forEach((sug) => {
+          if (sug.text === ans) {
+            if (sug.path === "logistic") logistic++;
+            else if (sug.path === "cultural") cultural++;
+          }
+        });
+      });
+    });
+    if (logistic === 0 && cultural === 0) return "mixed";
+    if (logistic > cultural) return "logistic";
+    if (cultural > logistic) return "cultural";
+    return "mixed";
+  };
+  const userPath = detectPath();
+
 
   return (
     <div
@@ -205,7 +249,7 @@ export default function FiveWhysFamilies() {
                   fontStyle: "italic",
                 }}
               >
-                Una docent. Dues autoritats. Quaranta cadires buides.<br />
+                Una docent. Dues autoritats. Vint cadires buides.<br />
                 Anem a investigar per què.
               </div>
               <button
@@ -580,37 +624,57 @@ export default function FiveWhysFamilies() {
                 >
                   ↳ O TRIA UNA HIPÒTESI:
                 </div>
-                <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
-                  {suggestions[step].map((s, i) => (
-                    <button
-                      key={i}
-                      onClick={() => handleSuggestion(s)}
-                      style={{
-                        background: "transparent",
-                        border: `1px solid ${palette.inkSoft}88`,
-                        color: palette.inkSoft,
-                        padding: "8px 12px",
-                        fontSize: "12px",
-                        fontFamily: "Georgia, serif",
-                        fontStyle: "italic",
-                        cursor: "pointer",
-                        transition: "all 0.2s",
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.background = palette.ink;
-                        e.currentTarget.style.color = palette.panel;
-                        e.currentTarget.style.borderColor = palette.ink;
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.background = "transparent";
-                        e.currentTarget.style.color = palette.inkSoft;
-                        e.currentTarget.style.borderColor = `${palette.inkSoft}88`;
-                      }}
-                    >
-                      {s}
-                    </button>
-                  ))}
+                <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                  {suggestions[step].map((s, i) => {
+                    const pc = pathColors[s.path];
+                    return (
+                      <button
+                        key={i}
+                        onClick={() => handleSuggestion(s.text)}
+                        style={{
+                          background: "transparent",
+                          border: `2px solid ${pc.main}`,
+                          color: pc.main,
+                          padding: "10px 14px",
+                          fontSize: "13px",
+                          fontFamily: "Georgia, serif",
+                          fontStyle: "italic",
+                          cursor: "pointer",
+                          transition: "all 0.2s",
+                          textAlign: "left",
+                          lineHeight: 1.4,
+                          borderLeft: `6px solid ${pc.main}`,
+                          position: "relative",
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.background = pc.main;
+                          e.currentTarget.style.color = palette.panel;
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.background = "transparent";
+                          e.currentTarget.style.color = pc.main;
+                        }}
+                      >
+                        <span
+                          style={{
+                            display: "inline-block",
+                            fontFamily: "'Courier New', monospace",
+                            fontSize: "9px",
+                            letterSpacing: "2px",
+                            fontStyle: "normal",
+                            opacity: 0.7,
+                            marginRight: "8px",
+                            textTransform: "uppercase",
+                          }}
+                        >
+                          [{pc.label}]
+                        </span>
+                        {s.text}
+                      </button>
+                    );
+                  })}
                 </div>
+
               </div>
 
               <button
@@ -637,6 +701,212 @@ export default function FiveWhysFamilies() {
             </div>
           </div>
         )}
+
+{/* PANTALLA DE CONVERGÈNCIA: revela que els dos camins porten al mateix lloc */}
+{showConvergence && (
+  <div style={{ animation: "fadeIn 0.8s ease" }}>
+    <div
+      style={{
+        background: palette.bgSoft,
+        border: `1px solid ${palette.muted}44`,
+        padding: "40px 32px",
+        boxShadow: "0 20px 60px rgba(0,0,0,0.5)",
+        marginBottom: "24px",
+        textAlign: "center",
+      }}
+    >
+      <div
+        style={{
+          fontFamily: "'Courier New', monospace",
+          fontSize: "11px",
+          letterSpacing: "4px",
+          color: palette.chalk,
+          marginBottom: "24px",
+        }}
+      >
+        OBSERVACIÓ INTERMÈDIA
+      </div>
+      <h2
+        style={{
+          fontSize: "clamp(22px, 3.5vw, 30px)",
+          fontStyle: "italic",
+          margin: "0 0 32px",
+          lineHeight: 1.3,
+          color: palette.panel,
+          fontWeight: 400,
+        }}
+      >
+        Has arribat fins aquí.<br />
+        Però també hi havia un altre camí...
+      </h2>
+
+      {/* Diagrama dels dos camins convergents */}
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "1fr auto 1fr",
+          gap: "16px",
+          alignItems: "center",
+          marginBottom: "32px",
+          maxWidth: "720px",
+          margin: "0 auto 32px",
+        }}
+      >
+        {/* Camí logístic */}
+        <div
+          style={{
+            padding: "20px",
+            background: userPath === "logistic" ? `${pathColors.logistic.main}22` : "transparent",
+            border: `2px solid ${pathColors.logistic.main}`,
+            borderLeft: `8px solid ${pathColors.logistic.main}`,
+            textAlign: "left",
+            opacity: userPath === "cultural" ? 0.55 : 1,
+            transition: "all 0.4s",
+          }}
+        >
+          <div
+            style={{
+              fontFamily: "'Courier New', monospace",
+              fontSize: "10px",
+              letterSpacing: "2px",
+              color: pathColors.logistic.main,
+              marginBottom: "8px",
+              fontWeight: "bold",
+            }}
+          >
+            VIA LOGÍSTICA {userPath === "logistic" && "← LA TEVA"}
+          </div>
+          <div style={{ fontSize: "13px", color: palette.panel, fontStyle: "italic", lineHeight: 1.4 }}>
+            Horaris, disponibilitat, organització del professorat...
+          </div>
+        </div>
+
+        {/* Fletxa de convergència */}
+        <div
+          style={{
+            fontSize: "32px",
+            color: palette.accent,
+            fontFamily: "'Courier New', monospace",
+          }}
+        >
+          →
+        </div>
+
+        {/* Camí sociocultural */}
+        <div
+          style={{
+            padding: "20px",
+            background: userPath === "cultural" ? `${pathColors.cultural.main}22` : "transparent",
+            border: `2px solid ${pathColors.cultural.main}`,
+            borderRight: `8px solid ${pathColors.cultural.main}`,
+            textAlign: "left",
+            opacity: userPath === "logistic" ? 0.55 : 1,
+            transition: "all 0.4s",
+          }}
+        >
+          <div
+            style={{
+              fontFamily: "'Courier New', monospace",
+              fontSize: "10px",
+              letterSpacing: "2px",
+              color: pathColors.cultural.main,
+              marginBottom: "8px",
+              fontWeight: "bold",
+            }}
+          >
+            VIA SOCIOCULTURAL {userPath === "cultural" && "← LA TEVA"}
+          </div>
+          <div style={{ fontSize: "13px", color: palette.panel, fontStyle: "italic", lineHeight: 1.4 }}>
+            Desvinculació, manca d'informació, recursos no utilitzats...
+          </div>
+        </div>
+      </div>
+
+      {/* Fletxa convergent cap avall */}
+      <div
+        style={{
+          fontSize: "40px",
+          color: palette.accent,
+          lineHeight: 1,
+          marginBottom: "8px",
+        }}
+      >
+        ↓
+      </div>
+
+      <div
+        style={{
+          background: palette.panel,
+          color: palette.ink,
+          padding: "28px",
+          maxWidth: "580px",
+          margin: "0 auto 32px",
+          position: "relative",
+          boxShadow: `0 8px 24px rgba(0,0,0,0.4)`,
+        }}
+      >
+        <div
+          style={{
+            position: "absolute",
+            top: "-10px",
+            left: "50%",
+            transform: "translateX(-50%)",
+            background: palette.accent,
+            color: palette.panel,
+            padding: "4px 14px",
+            fontFamily: "'Courier New', monospace",
+            fontSize: "10px",
+            letterSpacing: "3px",
+            fontWeight: "bold",
+          }}
+        >
+          PUNT DE CONVERGÈNCIA
+        </div>
+        <div
+          style={{
+            fontSize: "18px",
+            fontStyle: "italic",
+            lineHeight: 1.4,
+            color: palette.ink,
+          }}
+        >
+          Tant si la raó és logística com sociocultural, al final...<br />
+          <strong style={{ color: palette.accent, fontSize: "22px" }}>
+            {ROOT_CAUSE}
+          </strong>
+        </div>
+      </div>
+
+      <button
+        onClick={handleRevealRoot}
+        style={{
+          background: palette.accent,
+          color: palette.panel,
+          border: "none",
+          padding: "14px 32px",
+          fontSize: "12px",
+          fontFamily: "'Courier New', monospace",
+          letterSpacing: "3px",
+          textTransform: "uppercase",
+          cursor: "pointer",
+          fontWeight: "bold",
+          boxShadow: `4px 4px 0 ${palette.accentDark}`,
+          transition: "all 0.2s",
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.transform = "translate(-2px, -2px)";
+          e.currentTarget.style.boxShadow = `6px 6px 0 ${palette.accentDark}`;
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.transform = "translate(0, 0)";
+          e.currentTarget.style.boxShadow = `4px 4px 0 ${palette.accentDark}`;
+        }}
+      >
+        → Veure la causa arrel en detall
+      </button>
+    </div>
+  </div>
+)}
 
         {/* FINAL AMB FOTO IL·LUMINADA */}
         {showFinal && (
