@@ -18,29 +18,24 @@ export default function FiveWhysFamilies() {
 
   const suggestions = [
     [
-      "Perquè no tenen temps per la feina",
-      "Perquè no veuen que sigui important",
-      "Perquè no s'hi senten ben rebudes",
+      "Perquè moltes no poden assistir en l’horari establert.",
+      "Perquè estan desconnectades de la cultura de centre.",
     ],
     [
-      "Perquè la reunió és a hores impossibles",
-      "Perquè pensen que ja els informarem per email",
-      "Perquè l'any passat van sortir-ne frustrades",
+      "Perquè coincideix amb horaris laborals o responsabilitats familiars.",
+      "Perquè socioculturalment es senten desvinculats de l’educació dels seus fills.",
     ],
     [
-      "Perquè mai hem preguntat quan els va bé",
-      "Perquè fem reunions informatives, no participatives",
-      "Perquè es va parlar només de normativa i no de l'alumne",
+      "Perquè el centre només dóna una opció d’horari",
+      "Perquè tenen altres prioritats més enllà de l’educació.",
     ],
     [
-      "Perquè assumim que el nostre horari és el correcte",
-      "Perquè no tenim cultura de co-responsabilitat",
-      "Perquè confonem 'informar' amb 'connectar'",
+      "Perquè es prioritza la facilitat d’organitzar el professorat",
+      "Perquè ningú els ha explicat les possibilitats que els obre la educació.",
     ],
     [
-      "Perquè el centre no s'ha replantejat com es relaciona amb les famílies",
-      "Perquè ens falta un model de participació real al projecte educatiu",
-      "Perquè tractem les famílies com a receptores i no com a agents educatius",
+      "Perquè les famílies no eren a la presa de decisions de l'horari. Per tant, no s’han tingut en compte les seves necessitats ni s’ha recollit informació sobre la disponibilitat real de les famílies.",
+      "Perquè no s'ha pensat en que poden existir aquestes famílies ni s'han tingut en compte les seves necessitats. I no s’ha fet ús dels recursos TIS i treballadors socials que els hagués informat de la importància d’assistir a les reunions d’inici de curs.",
     ],
   ];
 
