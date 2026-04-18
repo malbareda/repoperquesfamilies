@@ -1046,7 +1046,8 @@ export default function FiveWhysFamilies() {
                 }}
               >
                 <strong style={{ color: palette.accent }}>Reflexió per a 🎩futurs directors🎩:</strong>{" "}
-                Seria interessant explorar alternatives i recollir informació sobre la disponibilitat real de les famílies i involucrar l’alumnat en la presentació de la reunió, per tal que les famílies tinguessin una motivació extra per assistir-hi. També implicar amb anticipació als recursos TIS i treballadors socials per conscienciar a les famílies de la importància d’aquestes reunions, i més en general, de l'educació dels seus fills.
+                Seria interessant explorar alternatives i recollir informació sobre la disponibilitat real de les famílies i involucrar l’alumnat en la presentació de la reunió, per tal que les famílies tinguessin una motivació extra per assistir-hi. També implicar amb anticipació als recursos TIS i treballadors socials per conscienciar a les famílies de la importància d’aquestes reunions, i més en general, de l'educació dels seus fills. La sala només s'omplirà quan l'arrel estigui resolta.
+
               </div>
 
               <div style={{ textAlign: "center" }}>
