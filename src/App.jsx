@@ -1045,11 +1045,8 @@ export default function FiveWhysFamilies() {
                   marginBottom: "28px",
                 }}
               >
-                <strong style={{ color: palette.accent }}>Reflexió per a l'equip directiu:</strong>{" "}
-                si aquesta és la causa arrel, les solucions han d'atacar-la
-                directament. No n'hi ha prou amb canviar l'horari de la reunió si
-                el problema real és una altra cosa. La sala només s'omplirà quan
-                l'arrel estigui resolta.
+                <strong style={{ color: palette.accent }}>Reflexió per a 🎩futurs directors🎩:</strong>{" "}
+                Seria interessant explorar alternatives i recollir informació sobre la disponibilitat real de les famílies i involucrar l’alumnat en la presentació de la reunió, per tal que les famílies tinguessin una motivació extra per assistir-hi. També implicar amb anticipació als recursos TIS i treballadors socials per conscienciar a les famílies de la importància d’aquestes reunions, i més en general, de l'educació dels seus fills.
               </div>
 
               <div style={{ textAlign: "center" }}>
